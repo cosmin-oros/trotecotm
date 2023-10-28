@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../Routes/PageRoutes';
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import Card from '../Components/Card';
+import Lottie from 'react-lottie';
+import loading from '../assets/loading.json';
+import notFound from '../assets/notfound.json';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAvN5FYavctE5fGBgkKdHUNjX--9lzACks",
@@ -33,13 +37,31 @@ interface Listing {
 }
 
 const RentalPage = () => {
-  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(10);
   const [displayTrotinete, setDisplayTrotinete] = useState(false);
+  const [showLottie, setShowLottie] = useState(false);
   const backSign = "<-";
   const Sign = "->";
-  const listings: Listing[] = [];
+  const [listings, setListings] = useState<Listing[]>([]);
   const navigate = useNavigate();
+  
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loading,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
+
+  const notFoundOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: notFound,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
 
   const questions = [
     {
@@ -88,21 +110,54 @@ const RentalPage = () => {
   const onSearchPress = async () => {
     validateForm();
     if (isFormValid) {
-      // ! cauta trotinete
-      setDisplayTrotinete(true);
-
       try {
         const listingsCollection = collection(db, 'listings');
         const querySnapshot = await getDocs(listingsCollection);
 
+        const fetchedListings: Listing[] = [];
         querySnapshot.forEach((doc) => {
-          listings.push(doc.data() as Listing);
+            const listingData = doc.data() as Listing;
+            
+            console.log('pret ', formData.q3);
+            if (listingData.city.toLowerCase() === formData.q5.toLowerCase() 
+                && isPriceSimilar(formData.q3, listingData.price)
+                && listingData.date === formData.q4) {
+              const date = new Date(listingData.date);
+              const formattedDate = date.toLocaleDateString();
+              listingData.date = formattedDate;
+              fetchedListings.push(listingData);
+            }
         });
+
+        setListings(fetchedListings);
 
         console.log('Listings:', listings);
       } catch (error) {
         console.error('Error getting listings:', error);
       }
+
+      setShowLottie(true);
+
+      setTimeout(() => {
+        setDisplayTrotinete(true);  
+        setShowLottie(false);
+      }, 2000);
+
+    }
+  };
+
+  const isPriceSimilar = (formDataPrice: string, listingPrice: number) => {
+    const priceRange = 5; 
+
+    const formDataPriceNumber = parseFloat(formDataPrice);
+
+    if (
+      !isNaN(formDataPriceNumber) && 
+      Math.abs(formDataPriceNumber - listingPrice) <= priceRange
+    ) {
+      return true; 
+    } else {
+      return false; 
     }
   };
 
@@ -192,8 +247,21 @@ const RentalPage = () => {
         </div>
       </div>
       <div className='fullscreen'>
+        {showLottie && (
+          <Lottie options={defaultOptions} height={200} width={200} />
+        )}
+
         {displayTrotinete ? (
-          <div>Se incarca..</div>
+          
+          <div className="listings-container">
+            {listings.length === 0 && (
+              <Lottie options={notFoundOptions} height={200} width={200} />
+            )}
+            
+            {listings.slice(0, 10).map((listing, index) => (
+              <Card key={index} listing={listing} />
+            ))}
+          </div>
         ) : (
           step < questions.length && (
             <div className='question'>

@@ -5,6 +5,8 @@ import '../styles.css';
 import firebase, { initializeApp } from 'firebase/app';
 import 'firebase/firestore';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import Lottie from 'react-lottie';
+import loading from '../assets/loading.json'
 
 const firebaseConfig = {
   apiKey: "AIzaSyAvN5FYavctE5fGBgkKdHUNjX--9lzACks",
@@ -29,11 +31,20 @@ interface FormData {
 }
 
 const ListingPage = () => {
-  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(10);
   const backSign = "<-";
   const Sign = "->";
   const navigate = useNavigate();
+  const [showLottie, setShowLottie] = useState(false);
+
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: loading,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice',
+    },
+  };
 
   const questions = [
     {
@@ -114,7 +125,13 @@ const ListingPage = () => {
       addDoc(listingsCollection, data)
         .then(() => {
           console.log('Data successfully added to Firestore');
-          navigate(PageRoutes.Main);
+          setShowLottie(true);
+
+          setTimeout(() => {
+            setShowLottie(false);
+            navigate(PageRoutes.Main);
+          }, 2000);
+
         })
         .catch((error: Error) => {
            console.error('Error adding data to Firestore: ', error);
@@ -214,8 +231,8 @@ const ListingPage = () => {
         </div>
       </div>
       <div className='fullscreen'>
-        {loading ? (
-          <div>Se incarca..</div>
+        {showLottie ? (
+          <Lottie options={defaultOptions} height={200} width={200} />
         ):(
           step < questions.length && (
             <div className='question'>
