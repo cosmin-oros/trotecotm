@@ -11,6 +11,8 @@ import { commonColors, questions } from '../constants';
 import QuestionForm from '../Components/QuestionForm';
 import { FormData } from '../types';
 import { PageRoutes } from '../Routes/PageRoutes';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ListingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -84,9 +86,16 @@ const ListingPage: React.FC = () => {
     }
   };
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="container">
       <h1 className="title">Listing Page</h1>
+      <button className="back-button" onClick={goBack}>
+        <FontAwesomeIcon icon={faArrowLeft} /> Back
+      </button>
       {loading ? (
         <Lottie options={loadingOptions} height={120} width={120} />
       ) : (

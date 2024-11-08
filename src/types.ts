@@ -24,3 +24,12 @@ export type ProgressBarProps = {
   currentStep: number;
   totalSteps: number;
 };
+
+export type Listing = {
+  name: string;
+  color: string;
+  contact: string;
+  price: number;
+  date: string;  
+  city: string;
+};
