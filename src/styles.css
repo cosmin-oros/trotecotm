@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
   background-color: #2e2e2e; 
-  color: #f0f0f0;
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
@@ -20,7 +20,7 @@ body {
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 20px;
-  color: #333;
+  color: #ffffff;
   text-align: center;
 }
 
@@ -162,4 +162,53 @@ body {
   font-size: 1rem;
   color: #555;
   margin: 3px 0;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #f0f0f0;
+  text-align: center;
+}
+
+.main-header {
+  margin-bottom: 20px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lottie-container {
+  margin-bottom: 20px;
+}
+
+.row-container {
+  display: flex;
+  gap: 15px;
+}
+
+/* Main Button Styles */
+.btn-main {
+  background-color: #28a745; /* Green accent */
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.btn-main:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.btn-main:active {
+  transform: scale(0.98);
 }
